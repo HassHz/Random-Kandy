@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+	<script src="https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.5.0/kandy.js"></script>
+	<head>
+		<title id="ting"> Home Page </title>
+		<style type="text/css">
+			
+			#ew {
+				text-align:center;
+			}
+			#lol {
+				text-align:center;
+			}
+			.pictureBorder {
+				border: 3px solid black;
+			}
+			p{
+				text-align:center;
+			}
+			body{
+				background-image: url(ornaments_texture.png);
+				background-repeat: no-repeat;
+				background-position: 50% 50%;
+				background-size:cover;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<h2 id="lol"><a href="https://www.genband.com"><img class="pictureBorder" src="GENBAND_Logo_2010.png" height="150px" width="300px"/></a> </h2>
+		<!-- strong = bold, em = italicize -->
+		<p> <strong><a href="http://kandy.io">Kandy.io</a></strong> <br /> NUVEA </p>
+		<p> <a href="index2.html">Fake Kandy.io</a> </p>
+		<p> <a href="#duck"> Scroll down to Nortel</a> </p>
+		
+		<hr />
+		
+		<h2 id="ew"> <a id = "duck" href="http://www.nortel-canada.com"> <img class='pictureBorder' src ="Nortel-logo-blue.png" height="150px" width="300px"/> </a> </h2>
+		<p> <em>Idk</em> </p>
+		
+		<hr />
+		
+		<input type ="submit" value="Login/Logout" onClick="toggleLogin()"/>
+		<div id="messages"> </div>
+		
+		<!-- MESSAGES -->
+		<fieldset>
+			<legend> Send Messages </legend>
+			Recipient: <input type="text" id="recipient"/>
+			
+			Message: <textarea id="messageBox"> </textarea>
+			
+			<input type="button" value="Send Message" onclick ="sendMessage();"/>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Chat</legend>
+			<div id="chat-messages"> </div>
+		</fieldset>
+		<!-- END MESSAGES HTML -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+		<script src="https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.5.0/kandy.js"></script>
+		
+		<script type="text/javascript">
+			kandy.setup({
+				listeners: {
+					message: onMessageReceived
+				}
+			});
+			
+			var projectAPIKey = "DAK8ae302d0639c4b2bb1e6ddc25b2f4b22";
+			var username = "user1";
+			var password = "1voluptasrepellat1";
+			
+			var isLoggedIn = false;
+			
+			function toggleLogin(){
+				if(isLoggedIn) {
+					kandy.logout(onLogoutSuccess);
+				} else {
+					kandy.login(projectAPIKey, username, password, onLoginSuccess, onLoginFailure);
+				}
+			}
+			
+			function log(message){
+				document.getElementById("messages").innerHTML += "<div>" + message + "</div>";
+			}
+			
+			function onLoginSuccess(){
+				log("LogIn was successful.");
+				isLoggedIn = true;
+			}
+			function onLoginFailure(){
+				log("Login failed.");
+				isLoggedIn = false;
+			}
+			function onLogoutSuccess(){
+				log("Logout was successful.");
+				isLoggedIn = false;
+			}
+			
+			function sendMessage(){
+				var recipient = document.getElementById("recipient").value;
+				var message = document.getElementById("messageBox").value;
+				
+				kandy.messaging.sendIm(recipient, message, onSendSuccess, onSendFailure);
+			}
+			
+			function onSendSuccess(message){
+				var recipient = message.destination.split("@")[0];
+				var element = "<div>Outgoing (" + recipient + "): " + _.escape(message.message.text) + "</div>";
+				document.getElementById("chat-messages").innerHTML += element;
+				log("Send Message Successful");
+			}
+			function onSendFailure(){
+				log("Send Message failed.");
+			}
+			
+			function onMessageReceived(message){
+				var sender = message.sender.user_id;
+				
+				var element = "<div>Incoming (" + sender + "): " + _.escape(message.message.text) + "</div>"
+				document.getElementById("chat-messages").innerHTML += element;
+				log(""+message.sender.user_id + " has just messaged you!");
+				document.getElementById("ting").innerHTML = message.sender.user_id + " messaged you";
+				setTimeout(clearTitle, 3000);
+			}
+			function clearTitle(){
+				document.getElementById("ting").innerHTML = "Home Page";
+			}
+			
+			
+			
+		</script>
+	</body>
+</html>
